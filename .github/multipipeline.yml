@@ -1,0 +1,41 @@
+name: multipipeline
+on:
+  push:
+    branches:
+      - dev
+      - qa
+  pull_request:
+    branches:
+      - dev
+      - qa
+  workflow_dispatch:
+
+jobs:
+  docker-login-dev:
+    name: Docker Login - Dev
+    runs-on: ubuntu-latest
+    environment: dev
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker login
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: registry-1.docker.io
+          username: ${{ secrets.DOCKERHUBUSERNAME }}
+          password: ${{ secrets.DOCKERHUBPASSWORD }}
+
+  docker-login-qa:
+    name: Docker Login - QA
+    runs-on: ubuntu-latest
+    environment: qa
+    if: github.ref == 'refs/heads/qa'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker login
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: registry-1.docker.io
+          username: ${{ secrets.DOCKERHUBUSERNAME }}
+          password: ${{ secrets.DOCKERHUBPASSWORD }}
+    
